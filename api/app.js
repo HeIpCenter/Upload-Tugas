@@ -1,18 +1,10 @@
 const express = require("express");
 const multer = require("multer");
 const session = require("express-session");
-const TelegramBot = require("node-telegram-bot-api");
 const path = require("path");
 
 const app = express();
 const port = process.env.PORT || 3000;
-
-// Token dari Bot Telegram
-const token = "7756972324:AAHzn5JS-1W2xZvwNsKITUz7DxNcbYWXR1g"; // Ganti dengan token bot Anda
-const chatId = "-1002341054048"; // Ganti dengan chat ID anggota atau channel tempat Anda akan mengirim file
-
-// Inisialisasi Telegram bot
-const bot = new TelegramBot(token);
 
 // Middleware untuk menguraikan data
 app.use(express.urlencoded({ extended: true }));
@@ -24,13 +16,23 @@ app.use(
   })
 );
 
+// Mengatur view engine
 app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "views"));
+app.set("views", path.join(__dirname, "../views")); // Mengatur path ke folder views
 
-const storage = multer.memoryStorage();
+// Mengatur penyimpanan berkas
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/");
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  },
+});
+
 const upload = multer({ storage });
 
-// Menyimpan data berkas dalam memori
+// Menyimpan data berkas yang diunggah dalam memori
 let uploadedFiles = [];
 let questions = [];
 
@@ -66,26 +68,17 @@ app.get("/admin", (req, res) => {
   res.render("admin", { uploadedFiles });
 });
 
-// Rute untuk mengunggah berkas dan mengirim ke Telegram
-app.post("/upload", upload.single("file"), async (req, res) => {
+// Rute untuk mengunggah berkas (hanya untuk admin)
+app.post("/upload", upload.single("file"), (req, res) => {
   if (!req.session.user || req.session.user.role !== "admin") {
     return res.redirect("/login");
   }
-
   const fullname = req.body.fullname;
-  const fileBuffer = req.file.buffer; // Ambil buffer file dari multer
-
-  // Kirim berkas ke Telegram
-  await bot.sendDocument(chatId, fileBuffer, {
-    caption: `Diunggah oleh: ${fullname}`,
-  });
-
   uploadedFiles.push({
-    filename: req.file.originalname,
+    filename: req.file.filename,
     originalname: req.file.originalname,
     fullname: fullname,
   });
-
   console.log(uploadedFiles);
   res.redirect("/admin");
 });
@@ -102,6 +95,7 @@ app.get("/user", (req, res) => {
 app.post("/submit-questions", (req, res) => {
   const { name, question1, question2, question3, filename } = req.body;
 
+  // Cari file berdasarkan nama file dan temukan fullname
   const fileEntry = uploadedFiles.find((file) => file.filename === filename);
   if (fileEntry) {
     questions.push({
@@ -128,7 +122,5 @@ app.get("/logout", (req, res) => {
   res.redirect("/login");
 });
 
-// Jalankan server
-app.listen(port, () => {
-  console.log(`Server berjalan di http://localhost:${port}`);
-});
+// Ekspor aplikasi agar dapat digunakan oleh Vercel
+module.exports = app;
