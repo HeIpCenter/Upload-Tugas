@@ -93,7 +93,7 @@ app.post("/upload", upload.single("file"), async (req, res) => {
     res.redirect("/admin");
   } catch (error) {
     console.error(error);
-    res.status(500).send('Gagal mengunggah berkas ke Telegram. Pastikan koneksi internet baik.');
+    res.status(500).send('Gagal mengunggah berkas. Pastikan koneksi internet baik.');
   }
 });
 
