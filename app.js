@@ -34,7 +34,7 @@ const upload = multer({ storage });
 
 // Menyimpan data berkas yang diunggah dalam memori
 let uploadedFiles = [];
-let questions = []; // Array untuk menyimpan pertanyaan yang diajukan
+let questions = []; 
 
 // Rute default
 app.get("/", (req, res) => {
@@ -73,13 +73,13 @@ app.get("/admin", (req, res) => {
        if (!req.session.user || req.session.user.role !== 'admin') {
            return res.redirect('/login');
        }
-       const fullname = req.body.fullname; // Mengambil nama lengkap
+       const fullname = req.body.fullname; 
        uploadedFiles.push({ 
            filename: req.file.filename, 
            originalname: req.file.originalname, 
-           fullname: fullname // Simpan nama lengkap
+           fullname: fullname 
        });
-       console.log(uploadedFiles); // Debugging: untuk melihat isi uploadedFiles
+       console.log(uploadedFiles); 
        res.redirect('/admin');
    });
 
@@ -105,7 +105,7 @@ app.post('/submit-questions', (req, res) => {
             question2, 
             question3, 
             filename, 
-            fullname: fileEntry.fullname // Ambil nama lengkap pengunggah
+            fullname: fileEntry.fullname 
         }); 
     }
     

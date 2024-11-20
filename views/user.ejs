@@ -37,18 +37,18 @@
     <script>
         $(document).ready(function(){
             $('.question-form').on('submit', function(event) {
-                event.preventDefault(); // Mencegah pengiriman form default
+                event.preventDefault(); 
                 const form = $(this);
                 $.ajax({
                     url: form.attr('action'),
                     type: form.attr('method'),
                     data: form.serialize(),
                     success: function(response) {
-                        alert(response.message); // Tampilkan pesan sukses
-                        form[0].reset(); // Reset form setelah pengiriman
+                        alert(response.message); 
+                        form[0].reset(); 
                     },
                     error: function() {
-                        alert('Terjadi kesalahan saat mengirim pertanyaan.'); // Pesan kesalahan jika gagal
+                        alert('Terjadi kesalahan saat mengirim pertanyaan.'); 
                     }
                 });
             });
