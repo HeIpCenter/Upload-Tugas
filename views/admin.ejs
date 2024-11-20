@@ -1,0 +1,39 @@
+   <!DOCTYPE html>
+   <html lang="id">
+   <head>
+       <meta charset="UTF-8">
+       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+       <title>Admin</title>
+       <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+   </head>
+   <body>
+       <div class="container">
+           <h2 class="text-center">Halaman Admin</h2>
+           <p class="text-center">Upload Tugasta beb baru logout mki kalau sudahki upload i</p>
+           <form action="/upload" method="POST" enctype="multipart/form-data" class="mb-4">
+               <div class="form-group">
+                   <label for="file">Pilih Berkas</label>
+                   <input type="file" name="file" class="form-control-file" id="file" required>
+               </div>
+               <div class="form-group">
+                   <label for="fullname">Nama Lengkap Peng-upload</label>
+                   <input type="text" name="fullname" class="form-control" id="fullname" placeholder="Nama lengkapta seng" required>
+               </div>
+               <button type="submit" class="btn btn-primary">Upload</button>
+           </form>
+           <h3>Berkas yang sudah di upload:</h3>
+           <ul class="list-group">
+               <% uploadedFiles.forEach(file => { %>
+                   <li class="list-group-item">
+                       <a href="/uploads/<%= file.filename %>"><%= file.originalname %></a> - Diupload oleh: <%= file.fullname %>
+                   </li>
+               <% }) %>
+           </ul>
+           <a href="/logout" class="btn btn-danger mt-3">Logout</a>
+       </div>
+
+       <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+       <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+       <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+   </body>
+   </html>
