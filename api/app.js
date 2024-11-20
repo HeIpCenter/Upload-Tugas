@@ -130,11 +130,9 @@ app.post("/submit-questions", (req, res) => {
 
 // Rute untuk menampilkan pertanyaan
 app.get("/questions", (req, res) => {
-    console.log(uploadedFiles); // Debug log untuk memastikan data
-    console.log(questions); // Debug log untuk memastikan data
-
-    res.render("questions", { questions });
+    res.render("questions", { questions, uploadedFiles }); // Mengirimkan uploadedFiles juga
 });
+
 
 // Rute logout
 app.get("/logout", (req, res) => {
