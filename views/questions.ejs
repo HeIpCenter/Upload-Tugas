@@ -18,8 +18,8 @@
                         <% questions.forEach(q => { %>
                             <% if (q.filename === file.originalname) { %>
                                 <li>
-                                    <strong>Nama:</strong> <%= q.name %>
-                                    <strong>Pertanyaan <%= questionNumber++ %>:</strong> <%= q.question %><br>
+                                    <strong>Nama:</strong> <%= q.name %><br>
+                                    <strong>Pertanyaan <%= questionNumber++ %>:</strong> <%= q.question %>
                                 </li>
                             <% } %>
                         <% }) %>
