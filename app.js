@@ -99,9 +99,9 @@ app.post("/upload", upload.single("file"), async (req, res) => {
 
 // Rute untuk user
 app.get("/user", (req, res) => {
-  if (!req.session.user || req.session.user.role !== "user") {
-    return res.redirect("/login");
-  }
+  // if (!req.session.user || req.session.user.role !== "user") {
+  //   return res.redirect("/login");
+  // }
   res.render("user", { uploadedFiles });
 });
 
