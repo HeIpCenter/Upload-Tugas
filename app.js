@@ -1,10 +1,16 @@
 const express = require("express");
 const multer = require("multer");
 const session = require("express-session");
+const TelegramBot = require("node-telegram-bot-api");
 const path = require("path");
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
+
+// Token dari Bot Telegram
+const token = "7756972324:AAHzn5JS-1W2xZvwNsKITUz7DxNcbYWXR1g"; // Ganti dengan token bot Anda
+const chatId = "-1002341054048"; // Ganti dengan chat ID yang sesuai
+const bot = new TelegramBot(token, { polling: true }); // Inisialisasi bot
 
 // Middleware untuk menguraikan data
 app.use(express.urlencoded({ extended: true }));
@@ -18,18 +24,10 @@ app.use(
 
 // Mengatur view engine
 app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "views"));
+app.set("views", path.join(__dirname, "../views")); // Menunjuk ke folder views
 
 // Mengatur penyimpanan berkas
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/");
-  },
-  filename: (req, file, cb) => {
-    cb(null, file.originalname);
-  },
-});
-
+const storage = multer.memoryStorage(); // Simpan file dalam buffer
 const upload = multer({ storage });
 
 // Menyimpan data berkas yang diunggah dalam memori
@@ -68,21 +66,36 @@ app.get("/admin", (req, res) => {
   res.render("admin", { uploadedFiles });
 });
 
-   // Rute untuk mengunggah berkas (hanya untuk admin)
-   app.post('/upload', upload.single('file'), (req, res) => {
-       if (!req.session.user || req.session.user.role !== 'admin') {
-           return res.redirect('/login');
-       }
-       const fullname = req.body.fullname; 
-       uploadedFiles.push({ 
-           filename: req.file.filename, 
-           originalname: req.file.originalname, 
-           fullname: fullname 
-       });
-       console.log(uploadedFiles); 
-       res.redirect('/admin');
-   });
+// Rute untuk mengunggah berkas dan mengirim ke Telegram
+app.post("/upload", upload.single("file"), async (req, res) => {
+  if (!req.session.user || req.session.user.role !== "admin") {
+    return res.redirect("/login");
+  }
 
+  const fullname = req.body.fullname; 
+  const fileBuffer = req.file.buffer; // Ambil buffer file dari multer
+
+  // Kirim berkas ke Telegram
+  try {
+    const sentMessage = await bot.sendDocument(chatId, fileBuffer, {
+      caption: `Diunggah oleh: ${fullname}`,
+      filename: req.file.originalname // Menetapkan nama file untuk pengiriman
+    });
+
+    // Menyimpan data berkas di memori
+    uploadedFiles.push({
+      filename: sentMessage.document.file_id, // Simpan ID file untuk akses lebih lanjut
+      originalname: req.file.originalname,
+      fullname: fullname,
+    });
+
+    console.log(uploadedFiles);
+    res.redirect("/admin");
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Gagal mengunggah berkas ke Telegram. Pastikan koneksi internet baik.');
+  }
+});
 
 // Rute untuk user
 app.get("/user", (req, res) => {
@@ -93,33 +106,26 @@ app.get("/user", (req, res) => {
 });
 
 // Rute untuk mengirim pertanyaan
-app.post('/submit-questions', (req, res) => {
-    const { name, question1, question2, question3, filename } = req.body;
-    
-    // Cari file berdasarkan nama file dan temukan fullname
-    const fileEntry = uploadedFiles.find(file => file.filename === filename);
-    if (fileEntry) {
-        questions.push({ 
-            name, 
-            question1, 
-            question2, 
-            question3, 
-            filename, 
-            fullname: fileEntry.fullname 
-        }); 
-    }
-    
-    res.json({ message: "Pertanyaan berhasil dikirim!" });
-});
+app.post("/submit-questions", (req, res) => {
+  const { name, question, filename } = req.body; // Mengambil satu pertanyaan
 
+  const fileEntry = uploadedFiles.find((file) => file.originalname === filename);
+  if (fileEntry) {
+    questions.push({ 
+      name, 
+      question, 
+      filename, 
+      fullname: fileEntry.fullname 
+    });
+  }
+
+  res.json({ message: "Pertanyaan berhasil dikirim!" });
+});
 
 // Rute untuk menampilkan pertanyaan
 app.get("/questions", (req, res) => {
-    console.log(uploadedFiles); // Tambahkan log
-    console.log(questions); // Tambahkan log
-    res.render("questions", { questions });
+  res.render("questions", { questions });
 });
-
 
 // Rute logout
 app.get("/logout", (req, res) => {
