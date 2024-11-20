@@ -35,9 +35,9 @@ let uploadedFiles = [];
 let questions = []; 
 
 // Rute default
-app.get("/", (req, res) => {
-  res.redirect("/login");
-});
+// app.get("/", (req, res) => {
+//   res.redirect("/login");
+// });
 
 // Rute login
 app.get("/login", (req, res) => {
