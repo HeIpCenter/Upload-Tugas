@@ -16,26 +16,23 @@
             <% uploadedFiles.forEach(file => { %>
                 <li class="list-group-item">
                     <a href="/uploads/<%= file.filename %>"><%= file.originalname %></a> - Diunggah oleh: <%= file.fullname %>
+                    <form class="question-form mt-2" action="/submit-questions" method="POST">
+                        <input type="hidden" name="filename" value="<%= file.filename %>">
+                        <div class="form-group">
+                            <input type="text" name="name" class="form-control" placeholder="Nama Anda" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="question" class="form-control" placeholder="Tuliskan Pertanyaan Anda" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Kirim Pertanyaan</button>
+                    </form>
                 </li>
             <% }) %>
         </ul>
-
-        <h3>Ajukan Pertanyaan:</h3>
-        <form id="questionForm">
-            <input type="hidden" name="filename" id="filename">
-            <div class="form-group">
-                <input type="text" name="name" class="form-control" placeholder="Nama Anda" required>
-            </div>
-            <div class="form-group">
-                <input type="text" name="question" class="form-control" placeholder="Tuliskan Pertanyaan Anda" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Kirim Pertanyaan</button>
-        </form>
-
         <p>
             <a href="questions.html" class="btn btn-info mt-3">Lihat Semua Pertanyaan</a>
         </p>
-        <a href="index.html" class="btn btn-danger mt-3">Logout</a>
+        <a href="/logout" class="btn btn-danger mt-3">Logout</a>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>

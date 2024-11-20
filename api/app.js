@@ -110,22 +110,21 @@ app.get("/user", (req, res) => {
 
 // Rute untuk mengirim pertanyaan
 app.post("/submit-questions", (req, res) => {
-  const { name, question, filename } = req.body; // Mengambil satu pertanyaan
+    const { name, question, filename } = req.body; // Mengambil satu pertanyaan
 
-  const fileEntry = uploadedFiles.find(
-    (file) => file.originalname === filename
-  );
-  if (fileEntry) {
-    questions.push({
-      name,
-      question,
-      filename,
-      fullname: fileEntry.fullname,
-    });
-  }
+    const fileEntry = uploadedFiles.find((file) => file.originalname === filename);
+    if (fileEntry) {
+        questions.push({ 
+            name, 
+            question, 
+            filename, 
+            fullname: fileEntry.fullname 
+        }); 
+    }
 
-  res.json({ message: "Pertanyaan berhasil dikirim!" });
+    res.json({ message: "Pertanyaan berhasil dikirim!" });
 });
+
 
 // Rute untuk menampilkan pertanyaan
 app.get("/questions", (req, res) => {

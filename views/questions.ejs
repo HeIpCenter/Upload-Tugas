@@ -9,12 +9,20 @@
 <body>
     <div class="container">
         <h2 class="text-center">Daftar Pertanyaan</h2>
-        <ul id="questionsList" class="list-group">
-            <% questions.forEach(entry => { %>
+        <ul class="list-group">
+            <% uploadedFiles.forEach(file => { %>
                 <li class="list-group-item">
-                    <strong>Nama Pengunggah:</strong> <%= entry.fullname %><br>
-                    <strong>Nama:</strong> <%= entry.name %><br>
-                    <strong>Pertanyaan:</strong> <%= entry.question %>
+                    <strong>Berkas:</strong> <%= file.originalname %> - Diunggah oleh: <%= file.fullname %>
+                    <ul>
+                        <% questions.forEach(q => { %>
+                            <% if (q.filename === file.originalname) { %>
+                                <li>
+                                    <strong>Nama:</strong> <%= q.name %><br>
+                                    <strong>Pertanyaan:</strong> <%= q.question %>
+                                </li>
+                            <% } %>
+                        <% }) %>
+                    </ul>
                 </li>
             <% }) %>
         </ul>
