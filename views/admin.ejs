@@ -24,7 +24,7 @@
         <ul class="list-group">
             <% uploadedFiles.forEach(file => { %>
                 <li class="list-group-item">
-                    <a href="/uploads/<%= file.filename %>"><%= file.originalname %></a> - Diunggah oleh: <%= file.fullname %>
+                    <a href="https://api.telegram.org/file/bot<YOUR_TOKEN>/<%= file.filename %>"><%= file.originalname %></a> - Diunggah oleh: <%= file.fullname %>
                 </li>
             <% }) %>
         </ul>

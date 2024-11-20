@@ -7,10 +7,10 @@ const path = require("path");
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Konfigurasi Bot Telegram
+// Token dari Bot Telegram
 const token = "7756972324:AAHzn5JS-1W2xZvwNsKITUz7DxNcbYWXR1g"; // Ganti dengan token bot Anda
 const chatId = "-1002341054048"; // Ganti dengan chat ID yang sesuai
-const bot = new TelegramBot(token);
+const bot = new TelegramBot(token, { polling: true }); // Inisialisasi bot
 
 // Middleware untuk menguraikan data
 app.use(express.urlencoded({ extended: true }));
@@ -75,11 +75,11 @@ app.post("/upload", upload.single("file"), async (req, res) => {
   const fullname = req.body.fullname;
   const fileBuffer = req.file.buffer; // Ambil buffer file dari multer
 
-  // Mengirim berkas ke Telegram
+  // Kirim berkas ke Telegram
   try {
-    await bot.sendDocument(chatId, fileBuffer, {
+    const sentMessage = await bot.sendDocument(chatId, fileBuffer, {
       caption: `Diunggah oleh: ${fullname}`,
-      filename: req.file.originalname, // Menetapkan nama file untuk pengiriman
+      filename: req.file.originalname,
     });
 
     uploadedFiles.push({
@@ -95,7 +95,7 @@ app.post("/upload", upload.single("file"), async (req, res) => {
     res
       .status(500)
       .send(
-        "Gagal mengunggah berkas ke Telegram. Pastikan koneksi internet Anda baik."
+        "Gagal mengunggah berkas ke Telegram. Pastikan koneksi internet baik."
       );
   }
 });
@@ -110,17 +110,15 @@ app.get("/user", (req, res) => {
 
 // Rute untuk mengirim pertanyaan
 app.post("/submit-questions", (req, res) => {
-  const { name, question1, question2, question3, filename } = req.body;
+  const { name, question, filename } = req.body; // Mengambil satu pertanyaan
 
   const fileEntry = uploadedFiles.find(
     (file) => file.originalname === filename
-  ); // Menggunakan originalname
+  );
   if (fileEntry) {
     questions.push({
       name,
-      question1,
-      question2,
-      question3,
+      question,
       filename,
       fullname: fileEntry.fullname,
     });
