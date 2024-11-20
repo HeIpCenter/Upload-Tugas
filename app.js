@@ -115,8 +115,11 @@ app.post('/submit-questions', (req, res) => {
 
 // Rute untuk menampilkan pertanyaan
 app.get("/questions", (req, res) => {
-  res.render("questions", { questions });
+    console.log(uploadedFiles); // Tambahkan log
+    console.log(questions); // Tambahkan log
+    res.render("questions", { questions });
 });
+
 
 // Rute logout
 app.get("/logout", (req, res) => {
