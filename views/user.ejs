@@ -30,13 +30,34 @@
             <% }) %>
         </ul>
         <p>
-            <a href="/questions" class="btn btn-info mt-3">Lihat Semua Pertanyaan</a>
+            <a href="questions.html" class="btn btn-info mt-3">Lihat Semua Pertanyaan</a>
         </p>
-        <a href="/logout" class="btn btn-danger mt-3">Logout</a>
+        <a href="index.html" class="btn btn-danger mt-3">Logout</a>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="script.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Menangani pengajuan pertanyaan
+            $('.question-form').on('submit', function(event) {
+                event.preventDefault(); // Mencegah pengiriman form default
+                const form = $(this);
+                $.ajax({
+                    url: form.attr('action'),
+                    type: form.attr('method'),
+                    data: form.serialize(),
+                    success: function(response) {
+                        // Tampilkan alert saat pengiriman berhasil
+                        alert(response.message); // Menampilkan pesan bahwa pertanyaan sukses dikirim
+                        form[0].reset(); // Reset form setelah pengiriman
+                    },
+                    error: function() {
+                        alert('Terjadi kesalahan saat mengirim pertanyaan.'); // Menampilkan kesalahan jika ada error
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>
