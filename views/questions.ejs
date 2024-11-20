@@ -9,17 +9,17 @@
 <body>
     <div class="container">
         <h2 class="text-center">Daftar Pertanyaan</h2>
-        
         <ul class="list-group">
             <% uploadedFiles.forEach(file => { %>
                 <li class="list-group-item">
                     <strong>Berkas:</strong> <%= file.originalname %> - Diunggah oleh: <%= file.fullname %>
                     <ul>
+                        <% let questionNumber = 1; %> <!-- Inisialisasi nomor pertanyaan -->
                         <% questions.forEach(q => { %>
                             <% if (q.filename === file.originalname) { %>
                                 <li>
-                                    <strong>Nama:</strong> <%= q.name %><br>
-                                    <strong>Pertanyaan:</strong> <%= q.question %>
+                                    <strong>Pertanyaan <%= questionNumber++ %>:</strong> <%= q.question %><br>
+                                    <strong>Nama:</strong> <%= q.name %>
                                 </li>
                             <% } %>
                         <% }) %>
